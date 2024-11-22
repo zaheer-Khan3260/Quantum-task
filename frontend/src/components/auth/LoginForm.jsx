@@ -41,11 +41,13 @@ export default function LoginForm() {
       if(responseData){
         console.log(responseData);
         try {
-          localStorage.setItem('userData', JSON.stringify(responseData.data));
+          const existingData = JSON.parse(localStorage.getItem('userData')) || [];
+          existingData.push(responseData.data.user);
+          localStorage.setItem('userData', JSON.stringify(existingData));
+          navigate("/");
         } catch (error) {
           console.error('Error storing user data in localStorage:', error);
         }
-        navigate("/");
       }
     }
   };

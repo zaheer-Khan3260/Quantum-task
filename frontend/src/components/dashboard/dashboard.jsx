@@ -1,31 +1,30 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Settings, X } from 'lucide-react';
 
 const Dashboard = () => {
   const [value, setValue] = useState([]);
 
   useEffect(() => {
-    try {
-      const item = localStorage.getItem('userData');
-      setValue(item ? JSON.parse(item.user) : []);
-    } catch (error) {
-      console.error("Error retrieving data from localStorage:", error);
-      setValue([]);
+    const userData = localStorage.getItem('userData');
+    if (userData) {
+      try {
+        const parsedData = JSON.parse(userData);
+        if (Array.isArray(parsedData)) {
+          console.log(parsedData);
+          setValue(parsedData);
+        } else {
+          console.error("Invalid data structure in localStorage.");
+        }
+      } catch (error) {
+        console.error("Error parsing data from localStorage:", error);
+      }
+    } else {
+      console.error("No 'userData' found in localStorage.");
     }
   }, []);
 
-  const getStatusColor = (status) => {
-    switch (status.toLowerCase()) {
-      case 'active':
-        return 'bg-green-500';
-      case 'suspended':
-        return 'bg-red-500';
-      case 'inactive':
-        return 'bg-yellow-500';
-      default:
-        return 'bg-gray-500';
-    }
-  };
+  console.log(value);
+
 
   return (
     <div className="w-full max-w-4xl mx-auto p-4">
@@ -44,7 +43,7 @@ const Dashboard = () => {
           <tbody>
             {value.length > 0 ? value.map((user) => (
               <tr key={user._id} className="border-b hover:bg-gray-50">
-                <td className="p-4">{user._id}</td>
+                <td className="p-4 pl-0">{user._id}</td>
                 <td className="p-4">
                   <div className="flex items-center gap-3">
                     {user.name}
